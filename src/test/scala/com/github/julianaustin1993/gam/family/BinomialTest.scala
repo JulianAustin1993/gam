@@ -1,22 +1,24 @@
 package com.github.julianaustin1993.gam.family
 
 import breeze.linalg.DenseVector
+import breeze.stats.distributions
 import com.github.julianaustin1993.gam.link.{Logit, getLink}
+import com.github.julianaustin1993.gam.logYDivMu
 import org.scalatest.FunSuite
 
 class BinomialTest extends FunSuite {
-  val binomial = Binomial(getLink("Logit").get)
+  val binomial: Binomial = Binomial(getLink("Logit").get)
   val x: Int = if (scala.util.Random.nextBoolean()) 1 else 0
   val mu: Double = scala.util.Random.between(0.0, 1.0)
   val cases: Int = 10
-  val dist = breeze.stats.distributions.Binomial(10, mu)
+  val dist: distributions.Binomial = breeze.stats.distributions.Binomial(10, mu)
   val N = 20
-  val y = DenseVector.rand(N, dist).mapValues(_.toDouble/cases.toDouble)
-  val muHat = DenseVector.ones[Double](N) * mu
-  val wts = DenseVector.ones[Double](size=N)* cases.toDouble
-  val dev = binomial.devResiduals(y, muHat, wts)
+  val y: DenseVector[Double] = DenseVector.rand(N, dist).mapValues(_.toDouble / cases.toDouble)
+  val muHat: DenseVector[Double] = DenseVector.ones[Double](N) * mu
+  val wts: DenseVector[Double] = DenseVector.ones[Double](size = N) * cases.toDouble
+  val dev: DenseVector[Double] = binomial.devResiduals(y, muHat, wts)
   test("testVariance") {
-    assert(binomial.variance(mu) == mu * (1-mu))
+    assert(binomial.variance(mu) == mu * (1 - mu))
   }
 
   test("testLink") {
@@ -30,8 +32,8 @@ class BinomialTest extends FunSuite {
   }
 
   test("testDevResiduals") {
-    val v1 = y *:* (y /:/ muHat).map(x => if (x == 0) 0 else math.log(x))
-    val v2 = (1.0 - y) *:*((1.0 - y) /:/ (1.0 - muHat)).map(x => if (x == 0) 0 else math.log(x))
+    val v1 = y *:* logYDivMu(y, muHat)
+    val v2 = (1.0 - y) *:* logYDivMu(1.0 - y, 1.0 - muHat)
     assert(breeze.linalg.isClose(dev, 2.0 * wts *:* (v1 + v2)))
   }
 

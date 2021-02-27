@@ -1,9 +1,8 @@
 package com.github.julianaustin1993.gam.family
 
-import breeze.linalg.{DenseVector, sum}
-import breeze.numerics.constants.E
-import breeze.numerics.log
+import breeze.linalg.DenseVector
 import com.github.julianaustin1993.gam.link.{Link, Log}
+import com.github.julianaustin1993.gam.logYDivMu
 import spire.implicits.cfor
 
 
@@ -14,17 +13,17 @@ case class Poisson(link: Link=Log()) extends Family{
 
   override def devResiduals: (DenseVector[Double], DenseVector[Double], DenseVector[Double]) => DenseVector[Double] = {
     (y, mu, wt) => {
-      2.0 * wt *:* (y *:* log((y /:/ mu).map(x => if (x == 0) E else x)) - (y - mu))
+      2.0 * wt *:* (y *:* logYDivMu(y, mu) - (y - mu))
     }
   }
 
   override def aic: (DenseVector[Double], DenseVector[Double], DenseVector[Double], DenseVector[Double], DenseVector[Double]) => Double = {
-    (y, n, mu, wt, dev) => {
+    (y, _, mu, wt, _) => {
       val r = DenseVector.zeros[Double](y.length)
-      cfor(0)( i => i < r.length, i => i+1)( i => {
+      cfor(0)(i => i < r.length, i => i + 1)(i => {
         r(i) = breeze.stats.distributions.Poisson(mu(i)).logProbabilityOf(y(i).toInt)
       })
-      -2.0 * sum(r *:* wt)
+      -2.0 * (r.t * wt)
     }
   }
 

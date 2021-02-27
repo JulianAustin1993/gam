@@ -17,11 +17,11 @@ case class Gaussian(link: Link = Identity()) extends Family {
   }
 
   override def aic: (DenseVector[Double], DenseVector[Double], DenseVector[Double], DenseVector[Double], DenseVector[Double]) => Double = {
-    (y, n, mu, wt, devRes) => {
+    (y, _, _, wt, devRes) => {
       val nobs = y.length
       val dev = sum(devRes)
       val sumLogWt = sum(log(wt))
-      nobs * (math.log(dev/nobs*2*math.Pi) + 1) + 2 - sumLogWt
+      nobs * (math.log(dev / nobs * 2 * math.Pi) + 1) + 2 - sumLogWt
     }
   }
 

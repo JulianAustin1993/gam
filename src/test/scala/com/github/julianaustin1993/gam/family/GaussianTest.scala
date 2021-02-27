@@ -1,22 +1,23 @@
 package com.github.julianaustin1993.gam.family
 
 import breeze.linalg.DenseVector
+import breeze.stats.distributions
 import com.github.julianaustin1993.gam.link.{Identity, Inverse, getLink}
 import org.scalatest.FunSuite
 
 class GaussianTest extends FunSuite {
-  val gaussian = Gaussian(getLink("Inverse").get)
+  val gaussian: Gaussian = Gaussian(getLink("Identity").get)
   val x: Double = scala.util.Random.nextFloat()
-  val dist = breeze.stats.distributions.Gaussian(0, 1)
+  val dist: distributions.Gaussian = breeze.stats.distributions.Gaussian(0, 1)
   val N = 200
-  val y = DenseVector.rand(N, dist)
-  val muHat = DenseVector.zeros[Double](N)
-  val wts = DenseVector.ones[Double](size=N)
-  val dev = gaussian.devResiduals(y, muHat, wts)
+  val y: DenseVector[Double] = DenseVector.rand(N, dist)
+  val muHat: DenseVector[Double] = DenseVector.zeros[Double](N)
+  val wts: DenseVector[Double] = DenseVector.ones[Double](size = N)
+  val dev: DenseVector[Double] = gaussian.devResiduals(y, muHat, wts)
 
   test("testLink") {
-    assert(gaussian.link == Inverse())
-    assert(Gaussian().link == Identity())
+    assert(gaussian.link == Identity())
+    assert(Gaussian(getLink("Inverse").get).link == Inverse())
   }
 
   test("testValidMu") {

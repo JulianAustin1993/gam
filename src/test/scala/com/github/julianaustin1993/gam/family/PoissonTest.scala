@@ -1,27 +1,27 @@
 package com.github.julianaustin1993.gam.family
 
 import breeze.linalg.DenseVector
-import breeze.numerics.constants.E
-import breeze.numerics.log
+import breeze.stats.distributions
 import com.github.julianaustin1993.gam.link.{Log, getLink}
+import com.github.julianaustin1993.gam.logYDivMu
 import org.scalatest.FunSuite
 
 class PoissonTest extends FunSuite {
-  val poisson = Poisson(getLink("Log").get)
+  val poisson: Poisson = Poisson(getLink("Log").get)
   val x: Double = math.abs(scala.util.Random.nextInt())
-  val dist = breeze.stats.distributions.Poisson(1)
+  val dist: distributions.Poisson = breeze.stats.distributions.Poisson(1)
   val N = 200
-  val y = DenseVector.rand(N, dist).mapValues(_.toDouble)
-  val muHat = DenseVector.ones[Double](N)
-  val wts = DenseVector.ones[Double](size=N)
-  val dev = poisson.devResiduals(y, muHat, wts)
+  val y: DenseVector[Double] = DenseVector.rand(N, dist).mapValues(_.toDouble)
+  val muHat: DenseVector[Double] = DenseVector.ones[Double](N)
+  val wts: DenseVector[Double] = DenseVector.ones[Double](size = N)
+  val dev: DenseVector[Double] = poisson.devResiduals(y, muHat, wts)
 
   test("testVariance") {
-    assert(poisson.variance(x)==x)
+    assert(poisson.variance(x) == x)
   }
 
   test("testLink") {
-   assert(poisson.link == Log())
+    assert(poisson.link == Log())
   }
 
   test("testName") {
@@ -29,7 +29,7 @@ class PoissonTest extends FunSuite {
   }
 
   test("testDevResiduals") {
-    val dev_calc= 2.0 * wts *:* (y *:* log( (y /:/ muHat).map(x => if (x == 0) E else x))) - 2.0 * wts *:* ( y - muHat)
+    val dev_calc = 2.0 * wts *:* (y *:* logYDivMu(y, muHat)) - 2.0 * wts *:* (y - muHat)
     assert(breeze.linalg.isClose(dev, dev_calc))
   }
 
