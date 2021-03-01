@@ -2,9 +2,14 @@ package com.github.julianaustin1993.gam.family
 
 import breeze.linalg.{DenseVector, any}
 import com.github.julianaustin1993.gam.link.{Link, Logit}
-import com.github.julianaustin1993.gam.logYDivMu
+import com.github.julianaustin1993.gam.yLogYDivMu
 import spire.implicits.cfor
 
+/**
+ * Binomial family with link function provided.
+ *
+ * @param link link function to use in the glm of this family. Defaults to the canonical logit link.
+ */
 case class Binomial(link: Link = Logit()) extends Family {
   override val name: String = "Binomial"
 
@@ -12,8 +17,8 @@ case class Binomial(link: Link = Logit()) extends Family {
 
   override def devResiduals: (DenseVector[Double], DenseVector[Double], DenseVector[Double]) => DenseVector[Double] = {
     (y, mu, wt) => {
-      val v1 = y *:* logYDivMu(y, mu)
-      val v2 = (1.0 - y) *:* logYDivMu(1.0 - y, 1.0 - mu)
+      val v1 = yLogYDivMu(y, mu)
+      val v2 = yLogYDivMu(1.0 - y, 1.0 - mu)
       2.0 * wt *:* (v1 + v2)
     }
   }
@@ -30,4 +35,8 @@ case class Binomial(link: Link = Logit()) extends Family {
   }
 
   override def validMu: Double => Boolean = mu => mu > 0.0 && mu < 1.0
+
+  override def initialiseMu: (DenseVector[Double], DenseVector[Double]) => DenseVector[Double] = {
+    (y, wts) => (wts *:* y + 0.5) /:/ (wts + 1.0)
+  }
 }

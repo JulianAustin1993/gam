@@ -1,8 +1,11 @@
 package com.github.julianaustin1993.gam.link
 
-import breeze.stats.distributions.{CauchyDistribution, Gaussian}
+import breeze.stats.distributions.Gaussian
 import com.github.julianaustin1993.gam.EPS
 
+/**
+ * Link object with the probit transformation.
+ */
 case class Probit() extends Link{
   val dist: Gaussian = Gaussian(0, 1)
 

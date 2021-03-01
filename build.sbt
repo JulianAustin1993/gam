@@ -21,3 +21,6 @@ libraryDependencies ++= Seq(
   "org.scalanlp" %% "breeze-viz" % "1.1"
 )
 
+libraryDependencies += "org.ddahl" %% "rscala" % "3.2.19"
+
+

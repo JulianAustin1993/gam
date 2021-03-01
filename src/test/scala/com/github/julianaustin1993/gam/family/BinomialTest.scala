@@ -3,7 +3,7 @@ package com.github.julianaustin1993.gam.family
 import breeze.linalg.DenseVector
 import breeze.stats.distributions
 import com.github.julianaustin1993.gam.link.{Logit, getLink}
-import com.github.julianaustin1993.gam.logYDivMu
+import com.github.julianaustin1993.gam.yLogYDivMu
 import org.scalatest.FunSuite
 
 class BinomialTest extends FunSuite {
@@ -32,8 +32,8 @@ class BinomialTest extends FunSuite {
   }
 
   test("testDevResiduals") {
-    val v1 = y *:* logYDivMu(y, muHat)
-    val v2 = (1.0 - y) *:* logYDivMu(1.0 - y, 1.0 - muHat)
+    val v1 = yLogYDivMu(y, muHat)
+    val v2 = yLogYDivMu(1.0 - y, 1.0 - muHat)
     assert(breeze.linalg.isClose(dev, 2.0 * wts *:* (v1 + v2)))
   }
 

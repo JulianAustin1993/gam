@@ -3,6 +3,9 @@ package com.github.julianaustin1993.gam.link
 import breeze.stats.distributions.CauchyDistribution
 import com.github.julianaustin1993.gam.EPS
 
+/**
+ * Link object with the cauchit (tangent) transformation.
+ */
 case class Cauchit() extends Link {
   val dist: CauchyDistribution = CauchyDistribution(0, 1)
 

@@ -2,10 +2,14 @@ package com.github.julianaustin1993.gam.family
 
 import breeze.linalg.DenseVector
 import com.github.julianaustin1993.gam.link.{Link, Log}
-import com.github.julianaustin1993.gam.logYDivMu
+import com.github.julianaustin1993.gam.yLogYDivMu
 import spire.implicits.cfor
 
-
+/**
+ * Poisson family with link function provided.
+ *
+ * @param link link function to use in the glm of this family. Defaults to the canonical log link.
+ */
 case class Poisson(link: Link=Log()) extends Family{
   override val name: String = "Poisson"
 
@@ -13,7 +17,7 @@ case class Poisson(link: Link=Log()) extends Family{
 
   override def devResiduals: (DenseVector[Double], DenseVector[Double], DenseVector[Double]) => DenseVector[Double] = {
     (y, mu, wt) => {
-      2.0 * wt *:* (y *:* logYDivMu(y, mu) - (y - mu))
+      2.0 * wt *:* (yLogYDivMu(y, mu) - (y - mu))
     }
   }
 
@@ -28,4 +32,8 @@ case class Poisson(link: Link=Log()) extends Family{
   }
 
   override def validMu: Double => Boolean = _ > 0
+
+  override def initialiseMu: (DenseVector[Double], DenseVector[Double]) => DenseVector[Double] = {
+    (y, _) => y + 0.1
+  }
 }

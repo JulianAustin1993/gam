@@ -1,6 +1,12 @@
 package com.github.julianaustin1993.gam
 
 package object link {
+  /**
+   * Accessor function to get link object by name.
+   *
+   * @param linkName String of name of known link function.
+   * @return Option of Link class.
+   */
   def getLink(linkName: String): Option[Link] = {
     linkName match {
       case "Identity" => Some(Identity())

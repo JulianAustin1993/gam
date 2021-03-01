@@ -1,5 +1,8 @@
 package com.github.julianaustin1993.gam.link
 
+/**
+ * Link object with the square root transformation.
+ */
 case class Sqrt() extends Link{
   override def linkFun: Double => Double = { mu: Double => math.sqrt(mu) }
 

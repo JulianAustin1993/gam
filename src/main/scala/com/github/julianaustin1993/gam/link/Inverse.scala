@@ -1,5 +1,8 @@
 package com.github.julianaustin1993.gam.link
 
+/**
+ * Link object with the inverse transformation.
+ */
 case class Inverse() extends Link{
   override def linkFun: Double => Double = { mu: Double => 1.0 / mu }
 

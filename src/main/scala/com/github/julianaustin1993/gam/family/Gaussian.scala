@@ -4,6 +4,11 @@ import breeze.linalg.{DenseVector, sum}
 import breeze.numerics.log
 import com.github.julianaustin1993.gam.link.{Identity, Link}
 
+/**
+ * Gaussian family with link function provided.
+ *
+ * @param link link function to use in the glm of this family. Defaults to the canonical identity link.
+ */
 case class Gaussian(link: Link = Identity()) extends Family {
   override val name: String = "Gaussian"
 
@@ -14,7 +19,7 @@ case class Gaussian(link: Link = Identity()) extends Family {
       val res = y - mu
       wt *:* res *:* res
     }
-  }
+    }
 
   override def aic: (DenseVector[Double], DenseVector[Double], DenseVector[Double], DenseVector[Double], DenseVector[Double]) => Double = {
     (y, _, _, wt, devRes) => {
@@ -26,4 +31,8 @@ case class Gaussian(link: Link = Identity()) extends Family {
   }
 
   override def validMu: Double => Boolean = _ => true
+
+  override def initialiseMu: (DenseVector[Double], DenseVector[Double]) => DenseVector[Double] = {
+    (y, _) => y
+  }
 }

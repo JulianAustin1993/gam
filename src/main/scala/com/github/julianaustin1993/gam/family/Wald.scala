@@ -4,6 +4,11 @@ import breeze.linalg.{DenseVector, sum}
 import breeze.numerics.log
 import com.github.julianaustin1993.gam.link.{InverseSquared, Link}
 
+/**
+ * Wald or inverse gaussian family with link function provided.
+ *
+ * @param link link function to use in the glm of this family. Defaults to the canonical inverse squared link.
+ */
 case class Wald(link: Link = InverseSquared()) extends Family {
   override val name: String = "Wald"
 
@@ -25,4 +30,8 @@ case class Wald(link: Link = InverseSquared()) extends Family {
   }
 
   override def validMu: Double => Boolean = _ => true
+
+  override def initialiseMu: (DenseVector[Double], DenseVector[Double]) => DenseVector[Double] = {
+    (y, _) => y
+  }
 }

@@ -2,7 +2,9 @@ package com.github.julianaustin1993.gam.link
 
 import com.github.julianaustin1993.gam.EPS
 
-
+/**
+ * Link object with the log transformation.
+ */
 case class Log() extends Link {
   override def linkFun: Double => Double = { mu: Double => math.log(mu) }
 

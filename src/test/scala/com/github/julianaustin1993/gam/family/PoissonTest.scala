@@ -3,7 +3,7 @@ package com.github.julianaustin1993.gam.family
 import breeze.linalg.DenseVector
 import breeze.stats.distributions
 import com.github.julianaustin1993.gam.link.{Log, getLink}
-import com.github.julianaustin1993.gam.logYDivMu
+import com.github.julianaustin1993.gam.yLogYDivMu
 import org.scalatest.FunSuite
 
 class PoissonTest extends FunSuite {
@@ -29,7 +29,7 @@ class PoissonTest extends FunSuite {
   }
 
   test("testDevResiduals") {
-    val dev_calc = 2.0 * wts *:* (y *:* logYDivMu(y, muHat)) - 2.0 * wts *:* (y - muHat)
+    val dev_calc = 2.0 * wts *:* (yLogYDivMu(y, muHat)) - 2.0 * wts *:* (y - muHat)
     assert(breeze.linalg.isClose(dev, dev_calc))
   }
 
